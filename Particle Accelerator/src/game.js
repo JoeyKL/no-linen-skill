@@ -1,4 +1,4 @@
-var canvas = doccument.getElementById('canvas');
+var canvas = document.getElementById('gameCanvas');
 var ctx = canvas.getContext('2d');
 
 const WIDTH = canvas.width;
