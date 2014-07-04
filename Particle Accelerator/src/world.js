@@ -3,7 +3,7 @@ function newWorld(width, height) {
         width: width,
         height: height,
         
-        entities: [],
+        entities: [newCircleEntity(50, 50, 10)],
         
         update: function(deltaTime) {
             for(var i = 0; i < this.entities.length; i++) {
