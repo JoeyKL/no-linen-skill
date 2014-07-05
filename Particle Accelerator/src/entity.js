@@ -37,7 +37,6 @@ function newCircleEntity(x, y, r) {
             ctx.fillStyle = this.color || 'black';
             
             ctx.beginPath();
-            ctx.moveTo(this.position.x, this.position.y);
             ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
             ctx.closePath();
             ctx.fill();
@@ -46,10 +45,10 @@ function newCircleEntity(x, y, r) {
         update: function(deltaTime) {
             this.velocity.dy += 0.001;
             updatePosition.call(this, deltaTime);
-            if(this.position.x<0) {this.position.x += WIDTH;}
-            if(this.position.x>=WIDTH) {this.position.x -= WIDTH;}
-            if(this.position.y<0) {this.position.y += HEIGHT;}
-            if(this.position.y>=HEIGHT) {this.position.y -= HEIGHT;}
+            if(this.position.x<0) this.position.x += WIDTH;
+            if(this.position.x>=WIDTH) this.position.x -= WIDTH;
+            if(this.position.y<0) this.position.y += HEIGHT;
+            if(this.position.y>=HEIGHT) this.position.y -= HEIGHT;
         }
     };
 }
