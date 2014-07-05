@@ -46,10 +46,10 @@ function newCircleEntity(x, y, r) {
         update: function(deltaTime) {
             this.velocity.dy += 0.001;
             updatePosition.call(this, deltaTime);
-            if(this.position.x<0) this.position.x += WIDTH;
-            if(this.position.x>=WIDTH) this.position.x -= WIDTH;
-            if(this.position.y<0) this.position.x += HEIGHT;
-            if(this.position.y>=HEIGHT) this.position.x -= HEIGHT;
+            if(this.position.x<0) {this.position.x += WIDTH;}
+            if(this.position.x>=WIDTH) {this.position.x -= WIDTH;}
+            if(this.position.y<0) {this.position.y += HEIGHT;}
+            if(this.position.y>=HEIGHT) {this.position.y -= HEIGHT;}
         }
     };
 }
