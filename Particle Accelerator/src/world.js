@@ -8,7 +8,7 @@ function newWorld(width, height) {
         update: function(deltaTime) {
             for(var i = 0; i < this.entities.length; i++) {
                 var entity = this.entities[i];
-                if(typeof entity.update === 'function') {
+                if(entity && typeof entity.update === 'function') {
                     entity.update(deltaTime);
                 }
             }
@@ -17,7 +17,7 @@ function newWorld(width, height) {
         render: function(ctx) {
             for(var i = 0; i < this.entities.length; i++) {
                 var entity = this.entities[i];
-                if(typeof entity.render === 'function') {
+                if(entity && typeof entity.render === 'function') {
                     entity.render(ctx);
                 }
             }
