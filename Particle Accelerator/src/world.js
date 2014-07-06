@@ -3,7 +3,7 @@ function newWorld(width, height) {
         width: width,
         height: height,
         
-        entities: [newCircleEntity(50, 50, 10)],
+        entities: [],
         
         update: function(deltaTime) {
             for(var i = 0; i < this.entities.length; i++) {
@@ -23,5 +23,10 @@ function newWorld(width, height) {
             }
         }
     };
+    
+    ret.entities.push(newCircleEntity(this, 50, 50, 10));
+    addMotion.call(ret.entities[0]);
+    addGravity.call(ret.entities[0], {dx: 0, dy:0.001});
+    
     return ret;
 }
