@@ -4,6 +4,7 @@ function newWorld(width, height) {
         height: height,
         
         entities: [],
+        behaviors: [],
         
         update: function(deltaTime) {
             for(var i = 0; i < this.entities.length; i++) {
@@ -21,12 +22,10 @@ function newWorld(width, height) {
                     entity.render(ctx);
                 }
             }
-        }
+        },
     };
     
-    ret.entities.push(newCircleEntity(this, 50, 50, 10));
-    addMotion.call(ret.entities[0]);
-    addGravity.call(ret.entities[0], {dx: 0, dy:0.001});
+    ret.entities.push(newTurretEntity(ret, WIDTH/2, HEIGHT/2));
     
     return ret;
 }
