@@ -13,7 +13,7 @@ function newEntity(world, x, y) {
         update: function(deltaTime) {
             for(var i = 0; i<this.behaviors.length; i++) {
                 var behavior = this.behaviors[i];
-                if(behavior.condition.call(this)) {
+                if(typeof behavior.condition === 'undefined' || behavior.condition.call(this)) {
                     for(var j = 0; j<behavior.actions.length; j++) {
                         behavior.actions[j].call(this, deltaTime);
                     }
@@ -77,25 +77,70 @@ function newCircleEntity(world, x, y, r) {
     return ret;
 }
 
-//BEHAVIORS
-function addMotion() {
-    this.velocity = {dx: 0, dy: 0};
-    function updatePosition(deltaTime) {
-        this.position.x += this.velocity.dx*deltaTime;
-        this.position.y += this.velocity.dy*deltaTime;
-    }
-    
-    this.behaviors.push({condition: always, actions: [updatePosition]});
-    return this;
+function newTurretEntity(world, x, y) {
+    var ret = newCircleEntity(world, x, y, 15);
+    ret.cannon = newCannon([{direction: -Math.PI/12, template:{radius: 7, hue: 210, speed: 1}}, {direction: Math.PI/12, template:{radius: 7, hue: 210, speed: 1}}, {direction: 0, template:{radius: 7, hue: 240, speed: 1}}]);
+    ret.cooldown = 0;
+    ret.cooltime = 1000;
+    ret.behaviors.push({condition: function(){return mouse.down && this.cooldown <= 0},
+                        actions: [function(){this.cannon.fire(this.world, this.position.x, this.position.y, getDirection(this.position.x, this.position.y, mouse.x, mouse.y) )},
+                                  function(){this.cooldown = this.cooltime;}] });
+    ret.behaviors.push({actions: [function(deltaTime){this.cooldown = Math.max(this.cooldown-deltaTime, 0)}, function(){var lightness = Math.floor(this.cooldown*256/this.cooltime);this.color = 'rgb('+lightness+', ' +lightness+', '+lightness+')'}] } );
+    return ret;
 }
 
-function addGravity(velocity) {
-    function updateVelocity(deltaTime) {
-        this.velocity.dx += velocity.dx*deltaTime;
-        this.velocity.dy += velocity.dy*deltaTime;
+function newCannon(bullets) {
+    var ret = {
+        bullets: bullets,
+        fire: function(world, x, y, dir){
+            for(var i = 0; i < this.bullets.length; i++) {
+                newBulletEntity(world, x, y, dir + this.bullets[i].direction, this.bullets[i].template);
+            }
+        }
+    };
+    return ret;
+}
+
+function newBulletEntity(world, x, y, dir, template) {
+    var ret = newCircleEntity(world, x, y, template.radius);
+    addMotion(ret);
+    ret.color = 'hsl('+template.hue+', 70%, 50%)';
+    ret.velocity.xSpeed = 1;
+    ret.velocity.ySpeed = 1;
+    ret.velocity.direction = dir;
+    ret.velocity.speed = template.speed;
+    console.log(ret.velocity);
+    return ret;
+}
+
+//BEHAVIORS
+function addMotion(entity) {
+    entity.velocity = {xSpeed: 0, ySpeed: 0};
+    function updatePosition(deltaTime) {
+        entity.position.x += entity.velocity.xSpeed*deltaTime;
+        entity.position.y += entity.velocity.ySpeed*deltaTime;
     }
-    this.behaviors.push({condition: always, actions: [updateVelocity]})
-    return this;
+    Object.defineProperties(entity.velocity, {
+        'direction': {get: function(){return Math.atan2(this.xSpeed, this.ySpeed)},
+                      set: function(newDir){var oldSpeed = this.speed; this.xSpeed = oldSpeed*Math.cos(newDir); this.ySpeed = oldSpeed*Math.sin(newDir)},
+                      enumerable: true},
+        'speed': {get: function(){return Math.sqrt(Math.pow(this.xSpeed, 2) + Math.pow(this.ySpeed, 2))},
+                  set: function(newSpeed){var oldSpeed = this.speed; this.xSpeed*=newSpeed/oldSpeed; this.ySpeed*=newSpeed/oldSpeed},
+                  enumerable: true}
+    });
+    entity.behaviors.push({condition: always, actions: [updatePosition]});
+}
+
+function addGravity(entity, velocity) {
+    function updateVelocity(deltaTime) {
+        entity.velocity.xSpeed += velocity.xSpeed*deltaTime;
+        entity.velocity.ySpeed += velocity.ySpeed*deltaTime;
+    }
+    entity.behaviors.push({condition: always, actions: [updateVelocity]})
+}
+
+function addOffScreenDeath(entity) {
+    entity.behaviors.push({condition: offScreen, actions: [destroy]});
 }
 
 //CONDITIONS
@@ -120,4 +165,11 @@ function offScreen() {
 //ACTIONS
 function destroy() {
     this.world.deleteEntity(this);
+    
+}
+
+
+//utility
+function getDirection(x1, y1, x2, y2) {
+    return Math.atan2(y2-y1,x2-x1);
 }
