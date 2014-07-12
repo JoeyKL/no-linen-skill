@@ -19,9 +19,9 @@ function main() {
 }
 
 function init() {
-    canvas.addEventListener("mousemove", function(e){mouse.x=e.pageX;mouse.y=e.pageY}, false);
-    canvas.addEventListener("mousedown", function(e){mouse.down = true}, false);
-    canvas.addEventListener("mouseup", function(e){mouse.down = false}, false);
+    addEventListener("mousemove", function(e){mouse.x=e.pageX;mouse.y=e.pageY;}, false);
+    addEventListener("mousedown", function(e){mouse.down = true;}, false);
+    addEventListener("mouseup", function(e){mouse.down = false;}, false);
 }
 
 function mainLoop() {
@@ -31,7 +31,7 @@ function mainLoop() {
     render(ctx);
     then = now;
 
-    if(!done) setTimeout(mainLoop, 1);
+    if(!done) setTimeout(mainLoop, 10);
 }
 
 function update(deltaTime) {
