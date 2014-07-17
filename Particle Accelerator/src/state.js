@@ -1,5 +1,5 @@
 function newWorldState(width, height) {
-    return {
+    var worldState = {
         world: newWorld(width, height),
         
         update: function(deltaTime) {
@@ -9,19 +9,23 @@ function newWorldState(width, height) {
         render: function(ctx) {
             this.world.render(ctx);
         }
-    }
+    };
+    
+    return worldState;
 }
 
-function newMenuState() {
-    return {
-        buttons: [],
+
+
+function newMenuState(buttons) {
+    var menuState = {
+        buttons: buttons,
         
         update: function(deltaTime) {
-            //menu stuff goes here
         },
         
         render: function(ctx) {
-            //menu stuff goes here
         }
-    }
+    };
+    
+    return menuState;
 }

@@ -21,7 +21,7 @@ function newEntity(world, x, y) {
             }
         }
     }
-    world.entities.push(ret);
+    world.addEntity(ret)
     return ret;
 }
 
@@ -43,10 +43,10 @@ function newRectEntity(world, x, y, w, h) {
         ctx.fillRect(x, y, w, h)
     }
     Object.defineProperties(ret, {
-        'leftmost': {get: function(){return this.x}},
-        'rightmost': {get: function(){return this.x+this.w}},
-        'topmost': {get: function(){return this.y}},
-        'bottommost': {get: function(){return this.y+this.h}}});
+        'leftmost': {get: function(){return this.position.x}},
+        'rightmost': {get: function(){return this.position.x+this.w}},
+        'topmost': {get: function(){return this.position.y}},
+        'bottommost': {get: function(){return this.position.y+this.h}}});
     return ret;
 }
 
@@ -69,10 +69,10 @@ function newCircleEntity(world, x, y, r) {
         ctx.fill();
     };
     Object.defineProperties(ret, {
-        'leftmost': {get: function(){return this.x-this.radius}},
-        'rightmost': {get: function(){return this.x+this.radius}},
-        'topmost': {get: function(){return this.y-this.radius}},
-        'bottommost': {get: function(){return this.y+this.radius}}
+        'leftmost': {get: function(){return this.position.x-this.radius}},
+        'rightmost': {get: function(){return this.position.x+this.radius}},
+        'topmost': {get: function(){return this.position.y-this.radius}},
+        'bottommost': {get: function(){return this.position.y+this.radius}}
     });
     return ret;
 }
@@ -104,12 +104,12 @@ function newCannon(bullets) {
 function newBulletEntity(world, x, y, dir, template) {
     var ret = newCircleEntity(world, x, y, template.radius);
     addMotion(ret);
+    addOffScreenDeath(ret);
     ret.color = 'hsl('+template.hue+', 70%, 50%)';
     ret.velocity.xSpeed = 1;
     ret.velocity.ySpeed = 1;
     ret.velocity.direction = dir;
     ret.velocity.speed = template.speed;
-    console.log(ret.velocity);
     return ret;
 }
 
@@ -141,6 +141,7 @@ function addGravity(entity, velocity) {
 
 function addOffScreenDeath(entity) {
     entity.behaviors.push({condition: offScreen, actions: [destroy]});
+    entity.behaviors.push({actions: [function(){console.log(entity.rightmost)}] })
 }
 
 //CONDITIONS
@@ -164,8 +165,8 @@ function offScreen() {
 
 //ACTIONS
 function destroy() {
-    this.world.deleteEntity(this);
-    
+    console.log('bleh');
+    this.world.destroyEntity(this);
 }
 
 

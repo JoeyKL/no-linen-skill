@@ -4,6 +4,8 @@ function newWorld(width, height) {
         height: height,
         
         entities: [],
+        newEntities: [],
+        oldEntities: [],
         behaviors: [],
         
         update: function(deltaTime) {
@@ -13,6 +15,11 @@ function newWorld(width, height) {
                     entity.update(deltaTime);
                 }
             }
+            
+            this.newEntities.forEach(function(entity){this.entities.push(entity)}, this);
+            this.oldEntities.forEach(function(entity){this.entities.remove(entity)}, this);
+            this.newEntities = [];
+            this.oldEntities = [];
         },
         
         render: function(ctx) {
@@ -22,10 +29,18 @@ function newWorld(width, height) {
                     entity.render(ctx);
                 }
             }
-        },
+        }, 
+        
+        addEntity: function(newEntity) {
+            this.newEntities.push(newEntity);
+        }, 
+        
+        destroyEntity: function(oldEntity) {
+            this.oldEntities.push(oldEntity);
+        }
     };
     
-    ret.entities.push(newTurretEntity(ret, WIDTH/2, HEIGHT/2));
+    ret.addEntity(newTurretEntity(ret, width/2, height/2));
     
     return ret;
 }

@@ -13,6 +13,10 @@ var now = Date.now();
 
 var mouse = {x: 0, y:0, down: false};
 
+Array.prototype.remove = function(old) {
+    this.forEach(function(element, index){if(element==old){this.splice(index, 1)}}, this);
+}
+
 function main() {
     init();
     mainLoop();
